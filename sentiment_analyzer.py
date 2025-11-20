@@ -3,6 +3,7 @@ from transformers import pipeline
 import re
 from collections import Counter
 import warnings
+
 warnings.filterwarnings('ignore')
 
 class ReviewAnalyzer:
@@ -694,8 +695,8 @@ class ReviewAnalyzer:
         print("="*80)
         import os
         os.makedirs('outputs', exist_ok=True)
-        df_sample.to_csv('outputs/pitchfork_reviews_analyzed.csv', index=False)
-        print("✓ Saved to: outputs/pitchfork_reviews_analyzed.csv")
+        df_sample.to_csv('outputs/pitchfork_reviews_sentiment.csv', index=False)
+        print("✓ Saved to: outputs/pitchfork_reviews_sentiment.csv")
         
         return df_sample
     
@@ -704,7 +705,7 @@ class ReviewAnalyzer:
         print("EXAMPLE ANALYZED REVIEWS")
         print("="*80 + "\n")
         
-        df_analyzed = pd.read_csv('outputs/pitchfork_reviews_analyzed.csv')
+        df_analyzed = pd.read_csv('outputs/pitchfork_reviews_sentiment.csv')
         
         samples = df_analyzed.sample(num_examples)
         
@@ -732,7 +733,7 @@ def main():
     
     # Use outputs directory for all files
     data_path = 'outputs/pitchfork_reviews_preprocessed.csv'
-    output_path = 'outputs/pitchfork_reviews_analyzed.csv'
+    output_path = 'outputs/pitchfork_reviews_sentiment.csv'
     
     analyzer = ReviewAnalyzer(data_path)
     analyzer.load_models()

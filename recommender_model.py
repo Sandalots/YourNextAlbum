@@ -7,7 +7,7 @@ import pickle
 import os
 
 class EnhancedRecommender:
-    def __init__(self, data_path='outputs/pitchfork_reviews_analyzed.csv'):
+    def __init__(self, data_path='outputs/pitchfork_reviews_sentiment.csv'):
         print("Loading analyzed dataset...")
         self.df = pd.read_csv(data_path)
         self.vectorizer = None
@@ -464,9 +464,9 @@ class EnhancedRecommender:
     
     def load_models(self, directory='models'):
         """Load pre-built models from disk if available"""
-        vectorizer_path = f'{directory}/enhanced_vectorizer.pkl'
-        tfidf_path = f'{directory}/enhanced_tfidf_matrix.pkl'
-        embeddings_path = f'{directory}/enhanced_embeddings.npy'
+        vectorizer_path = f'{directory}/tfidf_vectorizer.pkl'
+        tfidf_path = f'{directory}/album_tfidf_matrix.pkl'
+        embeddings_path = f'{directory}/album_semantic_embeddings.npy'
         
         if not all(os.path.exists(p) for p in [vectorizer_path, tfidf_path, embeddings_path]):
             return False
@@ -491,11 +491,11 @@ class EnhancedRecommender:
     def save_models(self, directory='models'):
         os.makedirs(directory, exist_ok=True)
         
-        with open(f'{directory}/enhanced_vectorizer.pkl', 'wb') as f:
+        with open(f'{directory}/tfidf_vectorizer.pkl', 'wb') as f:
             pickle.dump(self.vectorizer, f)
-        with open(f'{directory}/enhanced_tfidf_matrix.pkl', 'wb') as f:
+        with open(f'{directory}/album_tfidf_matrix.pkl', 'wb') as f:
             pickle.dump(self.tfidf_matrix, f)
-        np.save(f'{directory}/enhanced_embeddings.npy', self.embeddings)
+        np.save(f'{directory}/album_semantic_embeddings.npy', self.embeddings)
         
         print(f"✓ Models saved to {directory}/")
 
