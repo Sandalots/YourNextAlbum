@@ -201,7 +201,7 @@ def get_album_arts_parallel(urls):
 
 @st.cache_resource
 def load_recommender():
-    print("Loading models: TF-IDF (text similarity), semantic embeddings (contextual meaning), and feature-engineered vectors (album attributes) for fast, accurate album recommendations.")
+    print("Loading Album Recommendation Models: TF-IDF (text similarity), semantic embeddings (contextual meaning), and feature-engineered vectors (album attributes) for fast, accurate album recommendations.")
     recommender = EnhancedRecommender()
     # Try loading pre-built models first
     if not recommender.load_models():
@@ -322,6 +322,7 @@ with col2:
         "🎵 Recommend", type="primary", use_container_width=True)
 with col3:
     surprise_button = st.button("🎲 Surprise Me", use_container_width=True)
+
 
 # Handle Clear button
 if clear_button:
