@@ -531,3 +531,6 @@ def main():
     recommender.build_models()
     recommender.save_models()
     print("✓ Models built and saved.")
+
+if __name__ == "__main__":
+    main()
