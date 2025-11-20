@@ -1,6 +1,6 @@
 import os
 import streamlit as st
-from recommender_model import EnhancedRecommender
+from album_recommender_model import EnhancedRecommender
 import requests
 from bs4 import BeautifulSoup
 from concurrent.futures import ThreadPoolExecutor, as_completed

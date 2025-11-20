@@ -6,7 +6,7 @@ import warnings
 
 warnings.filterwarnings('ignore')
 
-class ReviewAnalyzer:
+class ReviewAnalyser:
     def __init__(self, data_path='outputs/pitchfork_reviews_preprocessed.csv'):
         print("Loading dataset...")
         self.df = pd.read_csv(data_path)
@@ -735,7 +735,7 @@ def main():
     data_path = 'outputs/pitchfork_reviews_preprocessed.csv'
     output_path = 'outputs/pitchfork_reviews_preprocessed_plus_sentiments.csv'
     
-    analyzer = ReviewAnalyzer(data_path)
+    analyzer = ReviewAnalyser(data_path)
     analyzer.load_models()
     analyzer.analyze_all_reviews()
     

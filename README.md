@@ -1,16 +1,16 @@
 # Album Recommendation AI System
-- **album_scraper.py**: Scrapes thousands of album reviews from Pitchfork using Selenium and BeautifulSoup. The scraper collects review text, scores, album/artist info, and album art URLs.
-- **dataset_creator.py**: Cleans and preprocesses the raw review data using NLTK (Natural Language Toolkit) for tokenization, stopword removal, lemmatization, and stemming, plus HTML/text cleaning and feature engineering (e.g., sentiment, mood, instrumentation, context).
-- **sentiment_analyzer.py**: Uses NLP models (HuggingFace Transformers) to analyze review sentiment, summarize text, and extract features like mood, energy, instrumentation, production style, novelty, and more. Models used include DistilBERT for sentiment and BART for summarization.
-- **recommender_model.py**: Builds recommendation models using TF-IDF and SentenceTransformer embeddings. It combines review features, album metadata, and semantic search to match user prompts to relevant albums.
-- **app.py**: Streamlit web app for interactive recommendations. Users enter a prompt (e.g., “dreamy synthpop for studying”), and the app displays recommended albums with cover art, artist, score, and key highlights. The UI features custom CSS for a modern look and smooth animations.
+- **pitchfork_album_scraper.py**: Scrapes thousands of album reviews from Pitchfork using Selenium and BeautifulSoup. The scraper collects review text, scores, album/artist info, and album art URLs.
+- **album_reviews_dataset_creator.py**: Cleans and preprocesses the raw review data using NLTK (Natural Language Toolkit) for tokenization, stopword removal, lemmatization, and stemming, plus HTML/text cleaning and feature engineering (e.g., sentiment, mood, instrumentation, context).
+- **album_reviews_text_sentiment_analyser.py**: Uses NLP models (HuggingFace Transformers) to analyze review sentiment, summarize text, and extract features like mood, energy, instrumentation, production style, novelty, and more. Models used include DistilBERT for sentiment and BART for summarization.
+- **album_recommender_model.py**: Builds recommendation models using TF-IDF and SentenceTransformer embeddings. It combines review features, album metadata, and semantic search to match user prompts to relevant albums.
+- **album_recommender_prompt_app.py**: Streamlit web app for interactive recommendations. Users enter a prompt (e.g., “dreamy synthpop for studying”), and the app displays recommended albums with cover art, artist, score, and key highlights. The UI features custom CSS for a modern look and smooth animations.
 
 ## Album Recommendation System Pipeline
-1. **Scraping**: `album_scraper.py` collects thousands of reviews from Pitchfork, saving them as CSV.
-2. **Preprocessing**: `dataset_creator.py` cleans and normalizes the data, engineering features for downstream analysis.
-3. **Analysis**: `sentiment_analyzer.py` applies NLP models and custom keyword lists to extract rich features from each review.
-4. **Recommendation**: `recommender_model.py` builds semantic and keyword-based models to match user queries to albums.
-5. **User Interface**: `app.py` provides a fast, interactive Streamlit UI for exploring recommendations.
+1. **Scraping**: `pitchfork_album_scraper.py` collects thousands of reviews from Pitchfork, saving them as CSV.
+2. **Preprocessing**: `album_reviews_dataset_creator.py` cleans and normalizes the data, engineering features for downstream analysis.
+3. **Analysis**: `album_reviews_text_sentiment_analyser.py` applies NLP models and custom keyword lists to extract rich features from each review.
+4. **Recommendation**: `album_recommender_model.py` builds semantic and keyword-based models to match user queries to albums.
+5. **User Interface**: `album_recommender_prompt_app.py` provides a fast, interactive Streamlit UI for exploring recommendations.
 
 ## Models & Features
 - **Sentiment Analysis**: DistilBERT (HuggingFace) for positive/negative/neutral sentiment.
@@ -29,11 +29,11 @@
 python3 -m venv venv && source venv/bin/activate
 pip install -r requirements.txt
 
-python album_scraper.py          # Scrape reviews, (DO NOT RUN UNLESS YOU REALLY HAVE TO AS IT WILL TAKE A VERY LONG TIME!!!)
-python dataset_creator.py        # Preprocess with NLTK and turn into a dataset
-python sentiment_analyzer.py     # Analyze (8+ feature types) from review texts
-python recommender_model.py      # builds the model and recommends albums based on given prompt
-streamlit run app.py             # Launches a streamlit UI to allow users to prompt the created model for album recommendations
+python pitchfork_album_scraper.py  # Scrape reviews, (DO NOT RUN UNLESS YOU REALLY HAVE TO AS IT WILL TAKE A VERY LONG TIME TO SCRAPE ALL ~5000 ALBUM REVIEWS!!!)
+python album_reviews_dataset_creator.py # Preprocess with NLTK and turn into a dataset
+python album_reviews_text_sentiment_analyser.py # Analyze (8+ feature types) from review texts
+python album_recommender_model.py # builds the model and recommends albums based on given prompt
+streamlit run album_recommender_prompt_app.py # Launches a streamlit UI to allow users to prompt the created model for album recommendations
 ```
 
 ## Analysis Features from the Author's Album Review(s)
@@ -47,9 +47,9 @@ streamlit run app.py             # Launches a streamlit UI to allow users to pro
 - **Polarizing** - Divisive "love it or hate it" albums
 
 ## Output CSV Files (from data-scrapping, pre-processing and analysing each of the album review's sentiment)
-- **pitchfork_reviews.csv**: Raw scraped reviews from Pitchfork. Contains all original review text, scores, album/artist info, and URLs as collected by `album_scraper.py`.
+- **pitchfork_reviews.csv**: Raw scraped reviews from Pitchfork. Contains all original review text, scores, album/artist info, and URLs as collected by `pitchfork_album_scraper.py`.
 - **pitchfork_reviews_preprocessed.csv**: Cleaned and preprocessed dataset. Text is normalized, tokenized, lemmatized, and stopwords are removed using NLTK. Used as input for feature extraction and sentiment analysis.
-- **pitchfork_reviews_preprocessed_plus_sentiments.csv**: Fully analyzed dataset with all extracted features and sentiment results. Includes columns for sentiment, mood, instrumentation, production, novelty, context, and more, generated by `sentiment_analyzer.py`.
+- **pitchfork_reviews_preprocessed_plus_sentiments.csv**: Fully analyzed dataset with all extracted features and sentiment results. Includes columns for sentiment, mood, instrumentation, production, novelty, context, and more, generated by `album_reviews_text_sentiment_analyser.py`.
 
 ## Model Files (`models/` directory)
 - **tfidf_vectorizer.pkl**: Saved TF-IDF vectorizer used to transform review and album text into feature vectors for similarity search.
