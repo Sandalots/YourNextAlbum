@@ -527,10 +527,13 @@ class EnhancedRecommender:
 
 def main():
     print("Album Recommendation System initializing...")
+    print("Building models: TF-IDF (text similarity), semantic embeddings (contextual meaning), and feature-engineered vectors (album attributes)...")
+
     recommender = EnhancedRecommender()
     recommender.build_models()
     recommender.save_models()
-    print("✓ Models built and saved.")
+    
+    print("✓ Album Recommendation Models built and saved.")
 
 if __name__ == "__main__":
     main()
