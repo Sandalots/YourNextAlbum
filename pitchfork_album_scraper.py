@@ -431,7 +431,6 @@ class PitchforkSeleniumScraper:
             print("No reviews to save")
             return
 
-        import os
         os.makedirs('outputs', exist_ok=True)
 
         keys = self.reviews[0].keys()

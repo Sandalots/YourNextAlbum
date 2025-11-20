@@ -1,18 +1,13 @@
 import pandas as pd
 import re
 import nltk
-import pandas as pd
-import re
-import nltk
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer, PorterStemmer
 from nltk.tokenize import word_tokenize
 import string
 import html
-import warnings
 import os
 
-warnings.filterwarnings('ignore')
 
 # Download required NLTK data
 print("Downloading NLTK resources...")
