@@ -321,7 +321,7 @@ class ReviewAnalyser:
         return themes
 
     def analyze_all_reviews(self):
-        print("Starting sentiment analysis for all album reviews...")
+        print("Starting sentiment analysis for all album reviews...\n")
         df_sample = self.df
         text_column = 'review_text_processed' if 'review_text_processed' in df_sample.columns else 'review_text'
 
@@ -438,7 +438,7 @@ class ReviewAnalyser:
 
     def show_examples(self, num_examples=3):
         print("\n" + "="*80)
-        print("EXAMPLE ANALYZED ALBUM REVIEWS")
+        print("EXAMPLE SENTIMENT ANALYZED ALBUM REVIEWS")
         print("="*80 + "\n")
 
         df_analyzed = pd.read_csv(

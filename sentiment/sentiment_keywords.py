@@ -105,21 +105,21 @@ polarizing_phrases = [
     'not for everyone', 'challenging listen', 'acquired taste',
     'controversial', 'some will love', 'some will hate',
     'won\'t appeal to everyone', 'turn off some listeners',
-     'split opinion', 'controversy', 'debated', 'hotly contested', 'mixed reactions', 'contentious', 'provokes discussion', 'sparks debate', 'divided audience'
+    'split opinion', 'controversy', 'debated', 'hotly contested', 'mixed reactions', 'contentious', 'provokes discussion', 'sparks debate', 'divided audience'
 ]
 
 novelty_positive = [
     'innovative', 'groundbreaking', 'fresh', 'original', 'unique',
     'pioneering', 'trailblazing', 'inventive', 'creative', 'novel',
     'revolutionary', 'game-changer', 'unprecedented',
-     'trailblazing', 'state-of-the-art', 'forward-thinking', 'cutting-edge', 'next-level', 'breakthrough', 'trendsetting', 'visionary', 'inventive'
+    'trailblazing', 'state-of-the-art', 'forward-thinking', 'cutting-edge', 'next-level', 'breakthrough', 'trendsetting', 'visionary', 'inventive'
 ]
 
 novelty_negative = [
     'derivative', 'formulaic', 'predictable', 'generic', 'clichéd',
     'unoriginal', 'by-the-numbers', 'paint-by-numbers', 'cookie-cutter',
     'rehash', 'retread', 'stale', 'tired',
-     'played out', 'worn', 'repetitive', 'unimaginative', 'stagnant', 'cliché', 'hackneyed', 'old hat', 'overused'
+    'played out', 'worn', 'repetitive', 'unimaginative', 'stagnant', 'cliché', 'hackneyed', 'old hat', 'overused'
 ]
 
 context_keywords = {

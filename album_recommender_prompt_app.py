@@ -251,7 +251,28 @@ placeholder_examples = [
     "explosive noise rock",
     "jazzy hip-hop instrumentals",
     "haunting gothic post-punk",
-    "feel-good summer pop"
+    "feel-good summer pop",
+    "cinematic post-rock",
+    "intimate acoustic ballads",
+    "funk-infused rock",
+    "ethereal vocal harmonies",
+    "driving country rock",
+    "catchy power pop",
+    "spiritual gospel choirs",
+    "dynamic progressive metal",
+    "laid-back reggae rhythms",
+    "complex math rock",
+    "soul-stirring blues rock",
+    "hypnotic trance music",
+    "raw lo-fi indie rock",
+    "uplifting worship music",
+    "cinematic electronic",
+    "intense hardcore punk",
+    "melodic death metal",
+    "smooth jazz fusion",
+    "ambient drone music",
+    "funky soul classics",
+    "darkwave synth-pop",
 ]
 
 # Initialize random placeholder in session state
@@ -330,15 +351,25 @@ if recommend_button or surprise_button or user_prompt:
         if 'num_results' not in st.session_state:
             st.session_state.num_results = 5
 
+        # Set default filter values if not defined
+        sentiment_filter = None
+        min_score = None
+        theme_filter = None
+        mood_filter = None
+        context_filter = None
+        novelty_filter = None
+        artist_filter = None
+
         # Load recommender on demand (only when needed) and cache it
         if 'recommender' not in st.session_state:
-            with st.spinner("Loading recommendation system..."):
+            with st.spinner("Loading Recommendations..."):
                 st.session_state.recommender = load_recommender()
-
-        with st.spinner("Finding albums..."):
-            # Always fetch enough for potential expansion (20 max)
+        with st.spinner("Loading Recommendations..."):
             recommendations = st.session_state.recommender.recommend_diverse(
-                user_prompt, top_n=20, min_score=7.0)
+                user_prompt,
+                top_n=st.session_state.num_results,
+                min_score=min_score
+            )
             st.session_state.all_recommendations = recommendations
             st.session_state.last_prompt = user_prompt
 

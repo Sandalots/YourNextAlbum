@@ -36,9 +36,9 @@ df['artist_name'] = df['artist_name'].fillna('Various Artists')
 print(f"Dataset shape: {df.shape}")
 
 missing_values = df.isnull().sum()
-print(f"Missing values: {missing_values.sum()}")
+print(f"Missing values: {missing_values.sum()}\n")
 
-print("Step 1: Basic cleaning")
+print("Step 1: Basic Missing Values Cleaning")
 
 df['genre'] = df['genre'].fillna('Unknown')
 mean_score = df['score'].astype(float).mean()
@@ -49,7 +49,7 @@ df['review_text'] = df['review_text'].fillna('')
 
 print("Filled missing values.\n")
 
-print("Step 2: Text preprocessing & normalization")
+print("Step 2: Text Preprocessing & Data Normalization")
 
 # Initialize text processing tools
 lemmatizer = WordNetLemmatizer()

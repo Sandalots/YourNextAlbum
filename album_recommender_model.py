@@ -24,8 +24,6 @@ class EnhancedRecommender:
             pass  # Enhanced features detected silently
 
     def build_models(self):
-        print("Building album recommendation models...")
-
         # Create enriched feature vectors with all available information
         feature_components = [
             self.df['genre'].astype(str),
@@ -524,7 +522,7 @@ class EnhancedRecommender:
             pickle.dump(self.tfidf_matrix, f)
         np.save(f'{directory}/album_semantic_embeddings.npy', self.embeddings)
 
-        print(f"✓ Models saved to {directory}/")
+        print(f"✓ Models saved to {directory}/ directory.")
 
 
 def main():
