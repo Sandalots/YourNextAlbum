@@ -1,9 +1,11 @@
+# from the sentiment directory, retrieve the following sentiment matching keywords rules;
 from sentiment.sentiment_keywords import (
     positive_words, negative_words, musical_terms, descriptive_words,
     intensity_modifiers, char_patterns, instrument_keywords, quality_indicators,
     style_indicators, mood_keywords, energy_indicators, polarizing_phrases,
     novelty_positive, novelty_negative, context_keywords, era_keywords, lyrical_theme_keywords, general_theme_keywords
 )
+
 import pandas as pd
 from transformers import pipeline
 import re
@@ -13,8 +15,6 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from transformers import logging
 
 logging.set_verbosity_error()
-
-# from the sentiment directory, retrieve the following sentiment matching keywords rules;
 
 
 class ReviewAnalyser:
