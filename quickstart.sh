@@ -24,17 +24,17 @@ if [ -f requirements.txt ]; then
   pip install -r requirements.txt
 fi
 
-# 3. Create dataset (assuming dataset_creator.py is the script for this)
-python3 dataset_creator.py
+# 3. Create album reviews dataset
+python3 album_reviews_dataset_creator.py
 
-# 4. Run sentiment analysis (if applicable)
-python3 sentiment_analyzer.py
+# 4. Analyze sentiment of album reviews
+python3 album_reviews_text_sentiment_analyser.py
 
-# 5. Build or enhance the recommender (if needed)
-python3 enhanced_recommender.py
 
-# 6. (Optional) Any other post-processing or preparation steps can be added here
+# 5. Build album recommender model
+python3 album_recommender_model.py
+
 
 echo "Quickstart complete: venv ready, dependencies installed, dataset created, sentiment analyzed, recommender built."
 
-streamlit run app.py
+streamlit run album_recommender_prompt_app.py
