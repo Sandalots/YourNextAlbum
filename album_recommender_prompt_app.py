@@ -9,6 +9,7 @@ import logging
 import sys
 import random
 from placeholders.placeholder_text import placeholder_examples
+import glob
 
 os.environ['PYTHONWARNINGS'] = 'ignore'
 
@@ -17,6 +18,9 @@ warnings.filterwarnings('ignore')
 logging.getLogger('streamlit').setLevel(logging.CRITICAL)
 logging.getLogger('streamlit.runtime.scriptrunner_utils.script_run_context').setLevel(
     logging.CRITICAL)
+
+# Suppress Streamlit deprecation warnings
+warnings.filterwarnings("ignore", category=FutureWarning, module="streamlit")
 
 
 class SuppressStderr:
@@ -123,15 +127,16 @@ user_prompt = st.text_input(
     key="main_input"
 )
 
-# Three buttons: Clear, Recommend, Surprise Me
-col1, col2, col3 = st.columns([1, 1, 1])
+# Replace the old button row with four buttons in a single row
+col1, col2, col3, col4 = st.columns([1, 1, 1, 1])
 with col1:
     clear_button = st.button("🔄 Clear", use_container_width=True)
 with col2:
-    recommend_button = st.button(
-        "🎵 Recommend", type="primary", use_container_width=True)
+    recommend_button = st.button("🎧 Recommend", use_container_width=True)
 with col3:
     surprise_button = st.button("🎲 Surprise Me", use_container_width=True)
+with col4:
+    show_analysis = st.button("🔧 Show Analysis", use_container_width=True)
 
 
 # Handle Clear button
@@ -355,3 +360,28 @@ if 'all_recommendations' in st.session_state and 'last_prompt' in st.session_sta
                     st.rerun()
                 else:
                     st.info("No more recommendations to show.")
+
+# --- Visualisation Browser ---
+def show_all_visualisations():
+    vis_dir = os.path.join(os.path.dirname(__file__), 'visualisations')
+    plot_files = sorted([f for f in glob.glob(os.path.join(vis_dir, '*.png'))])
+    txt_files = sorted([f for f in glob.glob(os.path.join(vis_dir, '*.txt'))])
+    if not plot_files and not txt_files:
+        st.info('No visualisations found.')
+        return
+    st.header('Analysis Plots & Reports')
+    # Show plots in a grid (2 per row)
+    for i in range(0, len(plot_files), 2):
+        cols = st.columns(2)
+        for j, file in enumerate(plot_files[i:i+2]):
+            with cols[j]:
+                st.image(file, caption=os.path.basename(file), use_container_width=True)
+    # Show text reports below
+    for file in txt_files:
+        st.subheader(os.path.basename(file))
+        with open(file, 'r') as f:
+            st.text(f.read())
+
+# Only show all visualisations if button is clicked
+if show_analysis:
+    show_all_visualisations()
