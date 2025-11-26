@@ -415,12 +415,198 @@ def plot_model_confidence_distribution(df, k=5, show_viz=True):
         plt.close()
         print(f"Saved model confidence distribution plot to {out_path}")
 
+def plot_metric_distribution(df, metric, vis_dir=VIS_DIR):
+    vals = df[metric].dropna()
+    if vals.empty:
+        print(f"No values for {metric} to plot.")
+        return
+    plt.figure(figsize=(8, 4))
+    plt.hist(vals, bins=20, alpha=0.7, color='#2ca02c')
+    plt.title(f'Distribution of {metric.replace("_", " ").title()}')
+    plt.xlabel(metric.replace('_', ' ').title())
+    plt.ylabel('Count')
+    plt.tight_layout()
+    out_path = os.path.join(vis_dir, f'{metric}_distribution.png')
+    plt.savefig(out_path)
+    plt.close()
+    print(f"Saved {metric} distribution plot to {out_path}")
+
+def plot_f1_distribution(df, vis_dir=VIS_DIR):
+    # F1 = 2 * (precision * recall) / (precision + recall)
+    prec = df['precision_at_5']
+    rec = df['recall_at_5']
+    f1 = 2 * (prec * rec) / (prec + rec)
+    f1 = f1.replace([np.inf, -np.inf], np.nan).dropna()
+    plt.figure(figsize=(8, 4))
+    plt.hist(f1, bins=20, alpha=0.7, color='#d62728')
+    plt.title('Distribution of F1 Score @5')
+    plt.xlabel('F1 Score @5')
+    plt.ylabel('Count')
+    plt.tight_layout()
+    out_path = os.path.join(vis_dir, 'f1_at_5_distribution.png')
+    plt.savefig(out_path)
+    plt.close()
+    print(f"Saved F1@5 distribution plot to {out_path}")
+
+def plot_per_prompt_error(df, vis_dir=VIS_DIR):
+    # Error = 1 - recall@5
+    errors = 1 - df['recall_at_5']
+    plt.figure(figsize=(10, 4))
+    plt.bar(df['prompt'], errors, color='#9467bd')
+    plt.title('Per-Prompt Error (1 - Recall@5)')
+    plt.xlabel('Prompt')
+    plt.ylabel('Error (1 - Recall@5)')
+    plt.xticks(rotation=90, fontsize=6)
+    plt.tight_layout()
+    out_path = os.path.join(vis_dir, 'per_prompt_error.png')
+    plt.savefig(out_path)
+    plt.close()
+    print(f"Saved per-prompt error plot to {out_path}")
+
+def plot_per_genre_metrics_heatmap(df, vis_dir=VIS_DIR):
+    # Build a DataFrame: rows=genres, cols=metrics, values=mean
+    genre_metrics = {}
+    for idx, row in df.iterrows():
+        genres = [r.get('genre') for r in row['recommended_albums'] if 'genre' in r and r['genre']]
+        for genre in set(genres):
+            if genre not in genre_metrics:
+                genre_metrics[genre] = {'recall': [], 'precision': [], 'ndcg': [], 'mrr': []}
+            genre_metrics[genre]['recall'].append(row['recall_at_5'])
+            genre_metrics[genre]['precision'].append(row['precision_at_5'])
+            genre_metrics[genre]['ndcg'].append(row['ndcg_at_5'])
+            genre_metrics[genre]['mrr'].append(row['mrr_at_5'])
+    if not genre_metrics:
+        print("No genre metrics to plot heatmap.")
+        return
+    import seaborn as sns
+    metrics = ['recall', 'precision', 'ndcg', 'mrr']
+    data = {g: [np.mean([v for v in genre_metrics[g][m] if v is not None]) for m in metrics] for g in genre_metrics}
+    df_heat = pd.DataFrame(data, index=metrics).T
+    plt.figure(figsize=(min(20, 0.5*len(df_heat)), 6))
+    sns.heatmap(df_heat, annot=True, fmt='.2f', cmap='viridis')
+    plt.title('Per-Genre Metrics Heatmap')
+    plt.ylabel('Genre')
+    plt.xlabel('Metric')
+    plt.tight_layout()
+    out_path = os.path.join(vis_dir, 'per_genre_metrics_heatmap.png')
+    plt.savefig(out_path)
+    plt.close()
+    print(f"Saved per-genre metrics heatmap to {out_path}")
+
+def plot_error_correlation(df, vis_dir=VIS_DIR):
+    # Correlation between metrics
+    metrics = ['recall_at_5', 'precision_at_5', 'ndcg_at_5', 'mrr_at_5']
+    corr = df[metrics].corr()
+    import seaborn as sns
+    plt.figure(figsize=(6, 5))
+    sns.heatmap(corr, annot=True, cmap='coolwarm', fmt='.2f')
+    plt.title('Correlation Between Evaluation Metrics')
+    plt.tight_layout()
+    out_path = os.path.join(vis_dir, 'metric_correlation_heatmap.png')
+    plt.savefig(out_path)
+    plt.close()
+    print(f"Saved metric correlation heatmap to {out_path}")
+
+def plot_prompt_length_vs_metrics(df, vis_dir=VIS_DIR):
+    # Prompt length vs. recall/precision
+    df = df.copy()
+    df['prompt_length'] = df['prompt'].apply(lambda x: len(str(x)))
+    metrics = ['recall_at_5', 'precision_at_5', 'ndcg_at_5', 'mrr_at_5']
+    for metric in metrics:
+        plt.figure(figsize=(8, 4))
+        plt.scatter(df['prompt_length'], df[metric], alpha=0.6)
+        plt.title(f'Prompt Length vs. {metric.replace("_", " ").title()}')
+        plt.xlabel('Prompt Length (characters)')
+        plt.ylabel(metric.replace('_', ' ').title())
+        plt.tight_layout()
+        out_path = os.path.join(vis_dir, f'prompt_length_vs_{metric}.png')
+        plt.savefig(out_path)
+        plt.close()
+        print(f"Saved prompt length vs {metric} plot to {out_path}")
+
+def plot_metric_outliers(df, vis_dir=VIS_DIR):
+    # Outlier prompts for each metric
+    metrics = ['recall_at_5', 'precision_at_5', 'ndcg_at_5', 'mrr_at_5']
+    for metric in metrics:
+        vals = df[metric].dropna()
+        if vals.empty:
+            continue
+        q1, q3 = np.percentile(vals, [25, 75])
+        iqr = q3 - q1
+        lower, upper = q1 - 1.5*iqr, q3 + 1.5*iqr
+        outliers = df[(df[metric] < lower) | (df[metric] > upper)]
+        if not outliers.empty:
+            plt.figure(figsize=(10, 4))
+            plt.bar(outliers['prompt'], outliers[metric], color='#ff7f0e')
+            plt.title(f'Outlier Prompts for {metric.replace("_", " ").title()}')
+            plt.xlabel('Prompt')
+            plt.ylabel(metric.replace('_', ' ').title())
+            plt.xticks(rotation=90, fontsize=6)
+            plt.tight_layout()
+            out_path = os.path.join(vis_dir, f'outlier_prompts_{metric}.png')
+            plt.savefig(out_path)
+            plt.close()
+            print(f"Saved outlier prompts for {metric} plot to {out_path}")
+
+def generate_summary_report(df, vis_dir=VIS_DIR):
+    lines = []
+    lines.append("ALBUM RECOMMENDATION SYSTEM ERROR ANALYSIS SUMMARY\n")
+    lines.append(f"Total prompts analyzed: {len(df)}\n")
+    for metric in ['recall_at_5', 'precision_at_5', 'ndcg_at_5', 'mrr_at_5']:
+        vals = df[metric].dropna()
+        lines.append(f"{metric.replace('_', ' ').title()}: mean={vals.mean():.3f}, median={vals.median():.3f}, std={vals.std():.3f}, min={vals.min():.3f}, max={vals.max():.3f}\n")
+    # F1
+    prec = df['precision_at_5']
+    rec = df['recall_at_5']
+    f1 = 2 * (prec * rec) / (prec + rec)
+    f1 = f1.replace([np.inf, -np.inf], np.nan).dropna()
+    lines.append(f"F1@5: mean={f1.mean():.3f}, median={f1.median():.3f}, std={f1.std():.3f}, min={f1.min():.3f}, max={f1.max():.3f}\n")
+    # Top 5 worst and best prompts by recall
+    lines.append("\nTop 5 best prompts by Recall@5:\n")
+    best = df.sort_values('recall_at_5', ascending=False).head(5)
+    for _, row in best.iterrows():
+        lines.append(f"  {row['prompt']}: Recall@5={row['recall_at_5']:.3f}\n")
+    lines.append("\nTop 5 worst prompts by Recall@5:\n")
+    worst = df.sort_values('recall_at_5', ascending=True).head(5)
+    for _, row in worst.iterrows():
+        lines.append(f"  {row['prompt']}: Recall@5={row['recall_at_5']:.3f}\n")
+    # Per-genre summary
+    lines.append("\nPer-genre average metrics (for genres present in recommendations):\n")
+    genre_metrics = {}
+    for idx, row in df.iterrows():
+        genres = [r.get('genre') for r in row['recommended_albums'] if 'genre' in r and r['genre']]
+        for genre in set(genres):
+            if genre not in genre_metrics:
+                genre_metrics[genre] = {'recall': [], 'precision': [], 'ndcg': [], 'mrr': []}
+            genre_metrics[genre]['recall'].append(row['recall_at_5'])
+            genre_metrics[genre]['precision'].append(row['precision_at_5'])
+            genre_metrics[genre]['ndcg'].append(row['ndcg_at_5'])
+            genre_metrics[genre]['mrr'].append(row['mrr_at_5'])
+    for genre, vals in genre_metrics.items():
+        lines.append(f"  {genre}: Recall@5={np.mean(vals['recall']):.3f}, Precision@5={np.mean(vals['precision']):.3f}, nDCG@5={np.mean(vals['ndcg']):.3f}, MRR@5={np.mean(vals['mrr']):.3f}\n")
+    # Save
+    out_path = os.path.join(vis_dir, 'summary.txt')
+    with open(out_path, 'w') as f:
+        f.writelines(lines)
+    print(f"Saved summary report to {out_path}")
+
 # --------- Run Analyses ---------
 show_viz = not args.no_vizs
 analyze_recommendation_diversity(df, k=5, show_viz=show_viz)
 analyze_recommendation_overlap(df, k=5, show_viz=show_viz)
 analyze_recommendation_bias(df, group_feature='genre', k=5, show_viz=show_viz)
 plot_model_confidence_distribution(df, k=5, show_viz=show_viz)
+plot_metric_distribution(df, 'recall_at_5')
+plot_metric_distribution(df, 'precision_at_5')
+plot_metric_distribution(df, 'ndcg_at_5')
+plot_metric_distribution(df, 'mrr_at_5')
+plot_f1_distribution(df)
+plot_per_prompt_error(df)
+plot_per_genre_metrics_heatmap(df)
+plot_error_correlation(df)
+plot_prompt_length_vs_metrics(df)
+plot_metric_outliers(df)
+generate_summary_report(df)
 
 # Print top 20 artists by recommendation count
 all_artists = []
