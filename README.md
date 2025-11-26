@@ -40,6 +40,8 @@ python album_reviews_text_sentiment_analyser.py # Analyze (8+ feature types) fro
 python album_recommender_model.py # builds the model and recommends albums based on given prompt
 
 streamlit run album_recommender_prompt_app.py # Launches a streamlit UI to allow users to prompt the created model for album recommendations
+
+(or alternatively use ./quickstart if on unix machine.)
 ```
 
 ## Analysis Features from the Author's Album Review(s)
@@ -64,3 +66,31 @@ streamlit run album_recommender_prompt_app.py # Launches a streamlit UI to allow
 - **tfidf_vectorizer.pkl**: Saved TF-IDF vectorizer used to transform review and album text into feature vectors for similarity search.
 - **album_tfidf_matrix.pkl**: Precomputed TF-IDF feature matrix for all albums, used for fast keyword-based recommendations.
 - **album_semantic_embeddings.npy**: SentenceTransformer embeddings for all albums, enabling semantic search and matching user prompts to albums based on meaning.
+
+
+## Error Analysing
+
+To analyze errors and evaluate the performance of the album recommendation system, use the provided error analysis script. This script runs a large set of prompts through the recommender, generates recommendations, and computes a variety of metrics and analyses to help you understand model performance and behavior.
+
+Run one of the following commands:
+
+```sh
+python3 error_analyze_recommender.py
+# or, if on a Unix-based system:
+./error_analyzer.sh
+```
+
+The script will output:
+
+- **Recall@5**: How many relevant albums were successfully recommended out of all possible relevant albums (for each prompt).
+- **Precision@5**: How many of the recommended albums are actually relevant.
+- **nDCG@5 (Normalized Discounted Cumulative Gain)**: Measures ranking quality, giving higher scores for relevant albums ranked higher.
+- **MRR@5 (Mean Reciprocal Rank)**: Indicates how early the first relevant album appears in the recommendations.
+- **Per-genre breakdowns**: Average metrics for each genre present in the recommendations.
+- **Diversity and overlap analysis**: Statistics and (optional) visualizations on unique genres/albums per prompt, overlap between prompts, and most commonly recommended albums and artists.
+- **Detailed prompt-by-prompt results**: For each prompt, shows the ground truth, recommended albums, and all computed metrics.
+- **Top 20 artists**: Lists the most frequently recommended artists.
+
+If you run with visualizations enabled (default), you will also see plots for genre/artist distribution and recommendation diversity.
+
+These analyses help you identify strengths, weaknesses, and potential biases in your recommendation model.
