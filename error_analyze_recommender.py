@@ -6,6 +6,7 @@ from collections import Counter
 import matplotlib.pyplot as plt
 import pandas as pd
 import argparse
+import os
 
 parser = argparse.ArgumentParser(
     description="Album Recommendation Error Analysis")
@@ -271,6 +272,9 @@ for idx, row in df_nonempty.iterrows():
 
 # --------- Analysis Functions ---------
 
+VIS_DIR = os.path.join(os.path.dirname(__file__), 'visualisations')
+os.makedirs(VIS_DIR, exist_ok=True)
+
 
 def analyze_recommendation_diversity(df, k=5, show_viz=True):
     genre_counts, album_counts = [], []
@@ -318,7 +322,11 @@ def analyze_recommendation_diversity(df, k=5, show_viz=True):
             plt.title('Distribution of Unique Genres per Prompt')
             plt.xlabel('Unique Genres')
             plt.ylabel('Count')
-            plt.show()
+            out_path = os.path.join(VIS_DIR, 'unique_genres_per_prompt.png')
+            plt.tight_layout()
+            plt.savefig(out_path)
+            plt.close()
+            print(f"Saved unique genres per prompt plot to {out_path}")
         except Exception as e:
             print(f"Visualization error: {e}")
 
@@ -342,7 +350,11 @@ def analyze_recommendation_overlap(df, k=5, show_viz=True):
         plt.title('Frequency of Album Recommendations in Top-K')
         plt.xlabel('Times recommended in top-K')
         plt.ylabel('Number of albums')
-        plt.show()
+        out_path = os.path.join(VIS_DIR, 'album_recommendation_frequency.png')
+        plt.tight_layout()
+        plt.savefig(out_path)
+        plt.close()
+        print(f"Saved album recommendation frequency plot to {out_path}")
 
 
 def plot_recommendation_feature_distribution(df, feature='genre', k=5, show_viz=True):
@@ -364,7 +376,11 @@ def plot_recommendation_feature_distribution(df, feature='genre', k=5, show_viz=
         plt.title(f'Top {feature.title()}s in Recommendations')
         plt.xlabel(feature.title())
         plt.ylabel('Count')
-        plt.show()
+        out_path = os.path.join(VIS_DIR, f'top_{feature}s_in_recommendations.png')
+        plt.tight_layout()
+        plt.savefig(out_path)
+        plt.close()
+        print(f"Saved top {feature}s in recommendations plot to {out_path}")
 
 
 def analyze_recommendation_bias(df, group_feature='genre', k=5, show_viz=True):
@@ -372,11 +388,39 @@ def analyze_recommendation_bias(df, group_feature='genre', k=5, show_viz=True):
         df, feature=group_feature, k=k, show_viz=show_viz)
 
 
+# --------- Plot Model Confidence Distribution ---------
+def plot_model_confidence_distribution(df, k=5, show_viz=True):
+    all_confidences = []
+    for _, row in df.iterrows():
+        recs = row['recommended_albums'][:k]
+        if recs and isinstance(recs[0], dict):
+            confs = [r.get('similarity') for r in recs if r.get('similarity') is not None]
+        else:
+            confs = []
+        all_confidences.extend(confs)
+    if not all_confidences:
+        print("No confidence (similarity) scores found in recommendations.")
+        return
+    print(f"Model confidence (similarity) stats: min={np.min(all_confidences):.3f}, max={np.max(all_confidences):.3f}, mean={np.mean(all_confidences):.3f}, median={np.median(all_confidences):.3f}")
+    if show_viz:
+        plt.figure(figsize=(8, 4))
+        plt.hist(all_confidences, bins=20, alpha=0.7, color='#1f77b4')
+        plt.title('Distribution of Model Confidence (Similarity) Scores')
+        plt.xlabel('Similarity Score')
+        plt.ylabel('Count')
+        plt.grid(axis='y', alpha=0.3)
+        plt.tight_layout()
+        out_path = os.path.join(VIS_DIR, 'model_confidence_distribution.png')
+        plt.savefig(out_path)
+        plt.close()
+        print(f"Saved model confidence distribution plot to {out_path}")
+
 # --------- Run Analyses ---------
 show_viz = not args.no_vizs
 analyze_recommendation_diversity(df, k=5, show_viz=show_viz)
 analyze_recommendation_overlap(df, k=5, show_viz=show_viz)
 analyze_recommendation_bias(df, group_feature='genre', k=5, show_viz=show_viz)
+plot_model_confidence_distribution(df, k=5, show_viz=show_viz)
 
 # Print top 20 artists by recommendation count
 all_artists = []

@@ -71,15 +71,13 @@ streamlit run album_recommender_prompt_app.py # Launches a streamlit UI to allow
 
 To analyze errors and evaluate the performance of the album recommendation system, use the provided error analysis script. This script runs a large set of prompts through the recommender, generates recommendations, and computes a variety of metrics and analyses to help you understand model performance and behavior.
 
-Run one of the following commands:
+Run the following commands:
 
 ```sh
 python3 error_analyze_recommender.py
-# or, if on a Unix-based system:
-./error_analyzer.sh
-```
 
-The script will output:
+
+The file will output:
 
 - **Recall@5**: How many relevant albums were successfully recommended out of all possible relevant albums (for each prompt).
 - **Precision@5**: How many of the recommended albums are actually relevant.
