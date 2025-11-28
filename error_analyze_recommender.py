@@ -12,6 +12,7 @@ parser = argparse.ArgumentParser(
     description="Album Recommendation Error Analysis")
 parser.add_argument('--no-vizs', action='store_true',
                     help='Suppress visualizations')
+
 args = parser.parse_args()
 """
 Combined script for unsupervised analysis of album recommendations.
@@ -133,18 +134,57 @@ for prompt in all_prompts:
     own_recs = all_recs_by_prompt[prompt]
     n_own = random.randint(2, min(5, len(own_recs))) if own_recs else 0
     own_truth = random.sample(own_recs, n_own) if own_recs else []
-    other_prompts = [p for p in all_prompts if p !=
-                     prompt and all_recs_by_prompt[p]]
-    other_albums = [
-        album for p in other_prompts for album in all_recs_by_prompt[p]]
-    n_other = random.randint(1, 3) if len(
-        other_albums) >= 3 else len(other_albums)
+    other_prompts = [p for p in all_prompts if p != prompt and all_recs_by_prompt[p]]
+    other_albums = [album for p in other_prompts for album in all_recs_by_prompt[p]]
+    n_other = random.randint(1, 3) if len(other_albums) >= 3 else len(other_albums)
     other_truth = random.sample(other_albums, n_other) if other_albums else []
     ground_truth = own_truth + other_truth
     prompt_ground_truth[prompt] = ground_truth
+
+# --- Add more explicit ground truths from dataset (guaranteed to exist) ---
+# These are albums confirmed to exist in outputs/pitchfork_reviews_raw.csv
+explicit_ground_truths = {
+    "ambient electronic": ["Opus", "Limitless Frame"],
+    "pop/r&b": ["Second Line: An Electro Revival", "Euphoric", "Broken Hearts & Beauty Sleep", "Music"],
+    "experimental jazz": ["Performing Belief", "Normal Sounds", "The Work Is Slow", "Orbweaving"],
+    "rock": ["Formal Growth in the Desert", "The Great Dismal", "In Times New Roman...", "Cousin", "Animal Drowning", "Polydans", "Sleepless Night EP", "Pale Horse Rider", "Dogsbody", "Face Down in the Garden", "I'm Not Sorry, I Was Just Being Me", "V", "Everybody Else Is Doing It, So Why Can't We?", "Nervous at Night", "Spike Field", "The Villain"],
+    "electronic": ["crux", "workshop 32", "Pripyat", "Blurry", "Drum Temple", "Repulsor"],
+    "rap": ["Vacabularee", "VULTURES 2", "Innercity Griots", "Scaring the Hoes", "In Dimes We Trust", "The Hurtless"],
+    "folk/country": ["I'm the Problem", "Landwerk No. 3", "Personal History", "History of a Feeling"],
+    "indie": ["My Method Actor", "Emotional Creature", "Pollen", "Swimmer", "Young Romance"],
+    "jazz": ["The Poet", "The Poet II", "Monument"],
+    "experimental": ["A Spirit Appears to a Pair of Lovers", "Naldjorlak", "&&&&&", "Spike Field", "Orbweaving"],
+    "shoegaze": ["Animal Drowning", "Orbweaving"],
+    "ambient": ["Opus", "Limitless Frame"],
+    "punk": ["Broken Hearts & Beauty Sleep", "Post-American"],
+    "country": ["Personal History", "History of a Feeling"],
+    "metal": ["In Times New Roman..."],
+    "singer-songwriter": ["Personal History", "History of a Feeling", "Nervous at Night"],
+    "experimental electronic": ["&&&&&", "Blurry", "Repulsor"],
+    "electronic dance": ["Blurry", "Drum Temple", "Repulsor"],
+    "dream pop": ["Blurry", "Polydans", "Face Down in the Garden"],
+    "post-rock": ["Monument", "Orbweaving"],
+    "indietronica": ["Blurry", "Polydans"],
+    "jazz fusion": ["The Work Is Slow", "Monument"],
+    "americana": ["Pale Horse Rider"],
+    "experimental hip hop": ["Scaring the Hoes", "The Hurtless"],
+    "math rock": ["The Work Is Slow"],
+    "chamber pop": ["Sleepless Night EP"],
+    "folk revival": ["Personal History"],
+    "alt-country": ["Pale Horse Rider"],
+    "female singer-songwriter": ["Personal History", "History of a Feeling", "Nervous at Night"],
+    "post-punk": ["Dogsbody", "Post-American"],
+    "lo-fi beats": ["Blurry"]
+}
+# Map these to prompts (add to ground truth for matching prompts)
+for prompt, albums in explicit_ground_truths.items():
+    for p in all_prompts:
+        if prompt in p.lower():
+            for album in albums:
+                if album not in prompt_ground_truth[p]:
+                    prompt_ground_truth[p].append(album)
+
 # --------- Additional Metrics: nDCG@5, MRR@5 ---------
-
-
 def dcg_at_k(recommended, ground_truth, k=5):
     dcg = 0.0
     gt_norm = [normalize_album_name(a) for a in ground_truth]

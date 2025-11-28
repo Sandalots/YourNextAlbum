@@ -30,10 +30,8 @@ python3 album_reviews_dataset_creator.py
 # 4. Analyze sentiment of album reviews
 python3 album_reviews_text_sentiment_analyser.py
 
-
 # 5. Build album recommender model
 python3 album_recommender_model.py
-
 
 echo "Quickstart complete: venv ready, dependencies installed, dataset created, sentiment analyzed, recommender built."
 
