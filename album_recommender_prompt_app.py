@@ -1,3 +1,5 @@
+''' YourNextAlbum Stage 5: Streamlit Web Interface/App for a End-to-End Album Recommendation System '''
+
 import os
 import streamlit as st
 from album_recommender_model import EnhancedRecommender
@@ -11,10 +13,12 @@ import random
 from placeholders.placeholder_text import placeholder_examples
 import glob
 
+# set PYTHONWARNINGS to ignore to suppress some warnings from libraries
 os.environ['PYTHONWARNINGS'] = 'ignore'
 
 # Suppress all warnings at multiple levels
 warnings.filterwarnings('ignore')
+
 logging.getLogger('streamlit').setLevel(logging.CRITICAL)
 logging.getLogger('streamlit.runtime.scriptrunner_utils.script_run_context').setLevel(logging.CRITICAL)
 
@@ -43,8 +47,7 @@ def get_album_art(url, _retry=0):
     """Fetch album art from Pitchfork review page"""
 
     try:
-        headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'}
+        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'}
         response = requests.get(url, headers=headers, timeout=3)
 
         if response.status_code != 200:
@@ -62,8 +65,7 @@ def get_album_art(url, _retry=0):
                 # Try srcset first (largest version)
                 if img_tag.get('srcset'):
                     srcset = img_tag.get('srcset')
-                    images = [s.strip().split(' ')[0]
-                              for s in srcset.split(',')]
+                    images = [s.strip().split(' ')[0] for s in srcset.split(',')]
                     
                     if images:
                         return images[-1]  # Last one is usually largest
@@ -194,6 +196,7 @@ if recommend_button or surprise_button or user_prompt:
 
         # Load recommender on demand (only when needed) and cache it
         if 'recommender' not in st.session_state:
+            # try and load recommendations
             with st.spinner("Loading YourNextAlbum Recommendations..."):
                 st.session_state.recommender = load_recommender()
 
@@ -219,6 +222,7 @@ if recommend_button or surprise_button or user_prompt:
                 # Add fade-in animation to newly loaded albums
                 fade_class = "fade-in" if i > (st.session_state.num_results - 5) else ""
                 st.markdown(f"<div class='{fade_class}'>", unsafe_allow_html=True)
+
                 # Display album art centered if available
                 album_art_url = album_arts.get(rec['url'])
 
@@ -237,6 +241,7 @@ if recommend_button or surprise_button or user_prompt:
                     for theme in themes_list:
                         if '_' in theme:
                             parts = theme.split('_', 1)
+
                             cleaned = parts[1].replace('_', ' ').title() if len(parts) > 1 else theme.replace('_', ' ').title()
 
                         else:
@@ -265,6 +270,7 @@ if recommend_button or surprise_button or user_prompt:
                     if rec.get('mood_energy'):
                         with st.expander("🎭 Mood & Energy"):
                             st.markdown(rec['mood_energy'])
+
                     if rec.get('listening_contexts'):
                         with st.expander("🎧 Best For"):
                             st.markdown(rec['listening_contexts'])
@@ -272,6 +278,7 @@ if recommend_button or surprise_button or user_prompt:
                 # Show confidence score before the read full review link, color-coded
                 if rec.get('similarity') is not None:
                     conf = rec['similarity']
+
                     if conf >= 0.75:
                         conf_class = 'confidence-green'
                         conf_emoji = '🟢'
@@ -297,8 +304,7 @@ if recommend_button or surprise_button or user_prompt:
             with col2:
                 if st.button("Load 5 More Albums", key="load_more", use_container_width=True):
                     if st.session_state.num_results < len(recommendations):
-                        st.session_state.num_results = min(
-                            st.session_state.num_results + 5, len(recommendations))
+                        st.session_state.num_results = min(st.session_state.num_results + 5, len(recommendations))
                         st.rerun()
 
                     else:
@@ -325,8 +331,7 @@ if 'all_recommendations' in st.session_state and 'last_prompt' in st.session_sta
         # Display cached recommendations
         for i, rec in enumerate(recommendations[:st.session_state.num_results], 1):
             # Add fade-in animation to newly loaded albums
-            fade_class = "fade-in" if i > (
-                st.session_state.num_results - 5) else ""
+            fade_class = "fade-in" if i > (st.session_state.num_results - 5) else ""
             st.markdown(f"<div class='{fade_class}'>", unsafe_allow_html=True)
 
             # Display album art centered if available
@@ -346,8 +351,8 @@ if 'all_recommendations' in st.session_state and 'last_prompt' in st.session_sta
                 for theme in themes_list:
                     if '_' in theme:
                         parts = theme.split('_', 1)
-                        cleaned = parts[1].replace('_', ' ').title() if len(
-                            parts) > 1 else theme.replace('_', ' ').title()
+
+                        cleaned = parts[1].replace('_', ' ').title() if len(parts) > 1 else theme.replace('_', ' ').title()
                         
                     else:
                         cleaned = theme.replace('_', ' ').title()
@@ -392,8 +397,7 @@ if 'all_recommendations' in st.session_state and 'last_prompt' in st.session_sta
         with col2:
             if st.button("Load 5 More Albums", key="load_more_cached", use_container_width=True):
                 if st.session_state.num_results < len(recommendations):
-                    st.session_state.num_results = min(
-                        st.session_state.num_results + 5, len(recommendations))
+                    st.session_state.num_results = min(st.session_state.num_results + 5, len(recommendations))
                     st.rerun()
 
                 else:
@@ -407,9 +411,10 @@ def show_all_visualisations():
 
     if not plot_files and not txt_files:
         st.info('No visualisations found.')
+
         return
     
-    st.header('YourNextAlbum Analysis Plots & Reports')
+    st.header('YourNextAlbum Analysis Plots & Evaulative Reports')
     st.markdown("<p style='text-align: center; color: gray;'>Click on any YourNextAlbum Analysis plot to view it in fullscreen mode.</p>", unsafe_allow_html=True) 
     
     # Show plots in a grid (2 per row)
@@ -429,9 +434,10 @@ def show_all_visualisations():
 
 # Only show YourNextAlbum Analysis visualisations if button is clicked
 if show_analysis:
+        # output all the plots, and summary text et cetera created from the error analysis source file and display inline here onto the streamlit web interface.
         show_all_visualisations()
 
-# Footer
+# Footer, we Group 10, timestamped and versioned for showing our progress to version 1.0!!!
 st.markdown("""
 <div style='text-align: center; font-size: 1.1em; font-weight: bold; margin-top: 2em;'>
     Group 10 &nbsp;|&nbsp; 29/11/2025 &nbsp;|&nbsp; Version 1.0

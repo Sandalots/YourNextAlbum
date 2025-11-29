@@ -1,3 +1,5 @@
+''' YourNextAlbum Stage 1: Scrapping Pitchfork Album Reviews using Selenium WebDriver '''
+
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
@@ -23,6 +25,7 @@ class PitchforkSeleniumScraper:
 
     def setup_driver(self):
         chrome_options = Options()
+
         if self.headless:
             chrome_options.add_argument("--headless")
 
@@ -87,6 +90,7 @@ class PitchforkSeleniumScraper:
 
             if new_links == 0:
                 print(f"  No more reviews found. Reached end at page {page}.")
+
                 break
 
             if len(links) >= num_reviews:
@@ -457,6 +461,7 @@ class PitchforkSeleniumScraper:
 
         except Exception as e:
             error_msg = str(e)
+            
             # Check if it's a timeout or connection error
             is_timeout = any(keyword in error_msg.lower() for keyword in ['timeout', 'timed out', 'connection', 'remote disconnected', 'max retries'])
 
@@ -543,5 +548,6 @@ def main():
 
         scraper.close_driver()
 
+# if the pitchfork data scraper is run directly by name, let's start and scrape the thousands of album reviews!
 if __name__ == "__main__":
     main()

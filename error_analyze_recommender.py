@@ -1,3 +1,5 @@
+''' YourNextAlbum Bonus Stage: Error Analysis and Evaluation of YourNextAlbum Recommendation Models '''
+
 import re
 import numpy as np
 from album_recommender_model import EnhancedRecommender
@@ -109,7 +111,9 @@ all_prompts = [
 ]
 
 prompt_ground_truth = {}
+
 data = []
+
 all_recs_by_prompt = {}
 
 # --- Generate recommendations and ground truths ---
@@ -269,6 +273,7 @@ df['recall_at_5'] = df.apply(lambda row: recall_at_k(row, 5), axis=1)
 df['precision_at_5'] = df.apply(lambda row: precision_at_k(row, 5), axis=1)
 df['ndcg_at_5'] = df.apply(lambda row: ndcg_at_k(row, 5), axis=1)
 df['mrr_at_5'] = df.apply(lambda row: mrr_at_k(row, 5), axis=1)
+
 df_nonempty = df[df['ground_truth_albums'].apply(lambda x: isinstance(x, list) and len(x) > 0)].copy()
 
 print("\nPerformance Metrics (Prompt-based, Top-5):")
@@ -366,15 +371,17 @@ def analyze_recommendation_diversity(df, k=5, show_viz=True):
     if show_viz:
         try:
             plt.figure(figsize=(8, 4))
-            plt.hist(genre_counts, bins=range(
-                1, max(genre_counts)+2), alpha=0.7)
+            plt.hist(genre_counts, bins=range(1, max(genre_counts)+2), alpha=0.7)
+
             plt.title('Distribution of Unique Genres per Prompt')
             plt.xlabel('Unique Genres')
             plt.ylabel('Count')
+
             out_path = os.path.join(VIS_DIR, 'unique_genres_per_prompt.png')
             plt.tight_layout()
             plt.savefig(out_path)
             plt.close()
+
             print(f"Saved unique genres per prompt plot to {out_path}")
 
         except Exception as e:
@@ -402,13 +409,16 @@ def analyze_recommendation_overlap(df, k=5, show_viz=True):
     if show_viz:
         plt.figure(figsize=(10, 4))
         pd.Series(counter).value_counts().sort_index().plot(kind='bar')
+
         plt.title('Frequency of Album Recommendations in Top-K')
         plt.xlabel('Times recommended in top-K')
         plt.ylabel('Number of albums')
+
         out_path = os.path.join(VIS_DIR, 'album_recommendation_frequency.png')
         plt.tight_layout()
         plt.savefig(out_path)
         plt.close()
+
         print(f"Saved album recommendation frequency plot to {out_path}")
 
 def plot_recommendation_feature_distribution(df, feature='genre', k=5, show_viz=True):
@@ -643,6 +653,7 @@ def plot_metric_outliers(df, vis_dir=VIS_DIR):
         iqr = q3 - q1
 
         lower, upper = q1 - 1.5*iqr, q3 + 1.5*iqr
+
         outliers = df[(df[metric] < lower) | (df[metric] > upper)]
 
         if not outliers.empty:
@@ -735,8 +746,7 @@ def plot_metric_by_genre(df, vis_dir=VIS_DIR):
 
         for genre in set(genres):
             for metric in metrics:
-                rows.append(
-                    {'genre': genre, 'metric': metric, 'value': row[metric]})
+                rows.append({'genre': genre, 'metric': metric, 'value': row[metric]})
                 
     if not rows:
         print("No genre-metric data for boxplot.")

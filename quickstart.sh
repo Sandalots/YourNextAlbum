@@ -5,6 +5,7 @@
 # 0. Create venv if neither .venv nor venv exists
 if [ ! -d ".venv" ] && [ ! -d "venv" ]; then
   echo "Creating Python virtual environment (.venv)..."
+
   python3 -m venv .venv
 fi
 
@@ -19,13 +20,16 @@ elif [ -d "venv" ]; then
 # tell user a venv cannot be found nor created.
 else
   echo "No virtual environment found!" >&2
+
   exit 1
 fi
 
 # 2. Install dependencies for YourNextAlbum
 if [ -f requirements.txt ]; then
   echo "Installing dependencies from requirements.txt..."
+
   pip install --upgrade pip
+  
   pip install -r requirements.txt
 fi
 

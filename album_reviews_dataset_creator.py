@@ -1,3 +1,5 @@
+''' YourNextAlbum Stage 2: Preprocessing Scrapped Pitchfork Album Reviews Dataset and turning into Pandas DataFrame '''
+
 import pandas as pd
 import re
 import nltk
@@ -8,8 +10,7 @@ import string
 import html
 import os
 
-
-# Ensure NLTK resources are available
+# Ensure NLTK resources are available for pre-processing the scrapped pitckfork review text
 def ensure_nltk_resource(resource):
     try:
         nltk.data.find(resource)
@@ -18,10 +19,11 @@ def ensure_nltk_resource(resource):
         nltk.download(resource.split('/')[-1], quiet=True)
 
 
-ensure_nltk_resource('tokenizers/punkt')
-ensure_nltk_resource('corpora/stopwords')
-ensure_nltk_resource('corpora/wordnet')
-ensure_nltk_resource('taggers/averaged_perceptron_tagger')
+# Ensure the necessary NLTK resources are available for pre-processing the scrapped pitckfork review text
+ensure_nltk_resource('tokenizers/punkt') # using punk to tokenize words
+ensure_nltk_resource('corpora/stopwords') # getting stopwords
+ensure_nltk_resource('corpora/wordnet') # using wordnet to lemmatize words in the reviews
+ensure_nltk_resource('taggers/averaged_perceptron_tagger') # using perceptron to tag words
 
 print("=== Scrapped Album Reviews Dataset Preprocessing ===\n")
 
@@ -33,6 +35,7 @@ df['artist_name'] = df['artist_name'].fillna('Various Artists')
 print(f"Input Scrapped Pitchfork Dataset shape: {df.shape}")
 
 missing_values = df.isnull().sum()
+
 print(f"Missing values in Pitchfork Dataset: {missing_values.sum()}\n")
 
 print("Step 1: Basic Missing Values Cleaning")
@@ -46,14 +49,16 @@ median_year = df['release_year'].astype(float).median()
 df['release_year'] = df['release_year'].fillna(median_year)
 df['review_text'] = df['review_text'].fillna('')
 
-print("Filled missing values.\n")
+print("Filled missing values in pitchfork scrapped data.\n")
 
 print("Step 2: Text Preprocessing & Data Normalization")
 
 # Initialize text processing tools
-lemmatizer = WordNetLemmatizer()
-stemmer = PorterStemmer()
-stop_words = set(stopwords.words('english'))
+lemmatizer = WordNetLemmatizer() # lemmatizer to reduce words to their base form
+
+stemmer = PorterStemmer() # stemmer to reduce words to their root form
+
+stop_words = set(stopwords.words('english')) # set of English stopwords to remove common words
 
 # Keep music-specific words that might be in stopwords
 music_stopwords = stop_words - {'not', 'no', 'more', 'most', 'very', 'only', 'too', 'just'}
@@ -163,6 +168,7 @@ print(f"Very short reviews (<100 chars): {empty_reviews}")
 q1_length = df['review_length'].quantile(0.25)
 q3_length = df['review_length'].quantile(0.75)
 iqr_length = q3_length - q1_length
+
 outliers_length = ((df['review_length'] < (q1_length - 1.5 * iqr_length)) | (df['review_length'] > (q3_length + 1.5 * iqr_length))).sum()
 print(f"Review length outliers: {outliers_length}")
 
@@ -194,8 +200,7 @@ print(f"    Max length: {df['review_length'].max()}")
 print(f"  Processed:")
 print(f"    Average words: {df['processed_word_count'].mean():.0f} words")
 print(f"    Average unique word ratio: {df['unique_word_ratio'].mean():.2f}")
-print(
-    f"    Average word length: {df['avg_word_length'].mean():.2f} characters")
+print(f"    Average word length: {df['avg_word_length'].mean():.2f} characters")
 
 print(f"\n" + "="*80)
 print("Saving preprocessed pitchfork reviews dataset...")
@@ -211,14 +216,19 @@ print(f"\nFinal dataset shape: {df.shape}")
 print(f"Total columns: {len(df.columns)}")
 print(f"\nNew columns added:")
 
+# get all the newly created columns from the YourNextAlbum preprocessing steps and dataset creation stage.
 new_cols = ['review_text_clean', 'review_text_processed', 'review_text_stemmed',
             'processed_word_count', 'unique_word_ratio', 'exclamation_count',
             'question_count', 'avg_word_length', 'score_normalized',
             'release_year_normalized', 'genre_count', 'artist_name_clean',
             'album_name_clean', 'album_title_length']
 
+# output to the user every newly created column
 for col in new_cols:
+    # check if valid col
     if col in df.columns:
+        # output new col name
         print(f"  - {col}")
 
+# new line for clarity
 print()

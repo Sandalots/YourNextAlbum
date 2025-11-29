@@ -1,3 +1,4 @@
+''' YourNextAlbum Stage 4: Enhanced Album Recommender System using TF-IDF, Semantic Embeddings, and Feature Engineering plus Sentiment Analysis from Stage 3 '''
 import os
 import pandas as pd
 import numpy as np
@@ -33,27 +34,23 @@ class EnhancedRecommender:
 
         # Add lyrical themes if available
         if 'lyrical_themes' in self.df.columns:
-            feature_components.append(
-                self.df['lyrical_themes'].fillna('').astype(str))
+            feature_components.append(self.df['lyrical_themes'].fillna('').astype(str))
 
         # Add musical characteristics if available
         if 'musical_characteristics' in self.df.columns:
-            feature_components.append(
-                self.df['musical_characteristics'].fillna('').astype(str))
+            feature_components.append(self.df['musical_characteristics'].fillna('').astype(str))
 
         # Add NEW enhanced features
         if 'instrumentation' in self.df.columns:
-            feature_components.append(
-                self.df['instrumentation'].fillna('').astype(str))
+            feature_components.append(self.df['instrumentation'].fillna('').astype(str))
+
         if 'mood_energy' in self.df.columns:
-            feature_components.append(
-                self.df['mood_energy'].fillna('').astype(str))
+            feature_components.append(self.df['mood_energy'].fillna('').astype(str))
         if 'listening_contexts' in self.df.columns:
-            feature_components.append(
-                self.df['listening_contexts'].fillna('').astype(str))
+            feature_components.append(self.df['listening_contexts'].fillna('').astype(str))
+
         if 'production_quality' in self.df.columns:
-            feature_components.append(
-                self.df['production_quality'].fillna('').astype(str))
+            feature_components.append(self.df['production_quality'].fillna('').astype(str))
 
         # Combine all features with weighted repetition for emphasis
         self.df['combined_features'] = (feature_components[0] + ' ' + feature_components[1] + ' ' + feature_components[1] + ' ')
@@ -66,8 +63,7 @@ class EnhancedRecommender:
         if self.has_enhanced_features and 'review_text_processed' in self.df.columns:
             # Using preprocessed album review text for TF-IDF (silent)
             # Add processed review text to features for better matching
-            self.df['combined_features'] = (self.df['combined_features'] + ' ' +
-                                            self.df['review_text_processed'].fillna(''))
+            self.df['combined_features'] = (self.df['combined_features'] + ' ' + self.df['review_text_processed'].fillna(''))
 
         # Building TF-IDF model (silent)
         self.vectorizer = TfidfVectorizer(
@@ -77,6 +73,7 @@ class EnhancedRecommender:
             min_df=2,  # Ignore very rare terms
             max_df=0.8  # Ignore very common terms
         )
+
         self.tfidf_matrix = self.vectorizer.fit_transform(
             self.df['combined_features'])
 
@@ -97,8 +94,7 @@ class EnhancedRecommender:
             # Use preprocessed text if available (more efficient for embeddings)
             if self.has_enhanced_features and 'review_text_processed' in self.df.columns:
                 if pd.notna(row['review_text_processed']) and row['review_text_processed']:
-                    text_parts.append(
-                        f"Review: {row['review_text_processed'][:500]}")
+                    text_parts.append(f"Review: {row['review_text_processed'][:500]}")
 
             if 'lyrical_themes' in self.df.columns and pd.notna(row['lyrical_themes']) and row['lyrical_themes']:
                 text_parts.append(f"Lyrical content: {row['lyrical_themes']}")
@@ -192,13 +188,11 @@ class EnhancedRecommender:
         if artist_name:
             target = self.df[
                 (self.df['album_name'].str.contains(album_name, case=False, na=False)) &
-                (self.df['artist_name'].str.contains(
-                    artist_name, case=False, na=False))
+                (self.df['artist_name'].str.contains(artist_name, case=False, na=False))
             ]
 
         else:
-            target = self.df[self.df['album_name'].str.contains(
-                album_name, case=False, na=False)]
+            target = self.df[self.df['album_name'].str.contains(album_name, case=False, na=False)]
 
         if len(target) == 0:
             return []
@@ -279,13 +273,11 @@ class EnhancedRecommender:
 
         # Filter by mood
         if mood:
-            results_df = results_df[results_df['mood_energy'].str.contains(
-                mood, case=False, na=False)]
+            results_df = results_df[results_df['mood_energy'].str.contains(mood, case=False, na=False)]
 
         # Filter by energy level
         if energy_level:
-            results_df = results_df[results_df['mood_energy'].str.contains(
-                f"energy:{energy_level}", case=False, na=False)]
+            results_df = results_df[results_df['mood_energy'].str.contains(f"energy:{energy_level}", case=False, na=False)]
 
         if min_score is not None:
             results_df = results_df[results_df['score'] >= min_score]
@@ -303,6 +295,7 @@ class EnhancedRecommender:
 
         if 'listening_contexts' not in self.df.columns:
             print("️ Listening context data not available")
+
             return []
 
         results_df = self.df[(self.df['listening_contexts'].str.contains(context, case=False, na=False)) & (self.df['score'] >= min_score)]
@@ -316,6 +309,7 @@ class EnhancedRecommender:
 
         if 'novelty_score' not in self.df.columns:
             print("️ Novelty score data not available")
+
             return []
 
         results_df = self.df[
@@ -332,6 +326,7 @@ class EnhancedRecommender:
 
         if 'comparisons' not in self.df.columns:
             print("️ Artist comparison data not available")
+
             return []
 
         results_df = self.df[(self.df['comparisons'].str.contains(artist_name, case=False, na=False)) & (self.df['score'] >= min_score)]
@@ -363,8 +358,7 @@ class EnhancedRecommender:
 
         exact_matches = self.df[
             (self.df['album_name'].str.lower().str.contains(query_lower, na=False, regex=False)) |
-            (self.df['artist_name'].str.lower().str.contains(
-                query_lower, na=False, regex=False))
+            (self.df['artist_name'].str.lower().str.contains(query_lower, na=False, regex=False))
         ]
 
         # Get initial larger pool of candidates
@@ -377,8 +371,7 @@ class EnhancedRecommender:
         # Boost similarity scores for exact name matches
         if not exact_matches.empty:
             for idx in exact_matches.index:
-                results_df.loc[idx, 'similarity'] = min(
-                    1.0, results_df.loc[idx, 'similarity'] + 0.5)
+                results_df.loc[idx, 'similarity'] = min(1.0, results_df.loc[idx, 'similarity'] + 0.5)
 
         if min_score is not None:
             results_df = results_df[results_df['score'] >= min_score]
@@ -397,8 +390,7 @@ class EnhancedRecommender:
             album_themes = set(row['themes'].split(', ')) if pd.notna(row['themes']) else set()
 
             # Calculate theme overlap with already selected albums
-            theme_overlap = len(
-                album_themes & selected_themes) / max(len(album_themes), 1)
+            theme_overlap = len(album_themes & selected_themes) / max(len(album_themes), 1)
 
             # Adjust similarity score based on diversity
             diversity_penalty = theme_overlap * diversity_weight
@@ -410,6 +402,7 @@ class EnhancedRecommender:
                 'adjusted_score': adjusted_score,
                 'original_similarity': row['similarity']
             })
+
             selected_themes.update(album_themes)
 
         # Re-sort by adjusted scores and get final recommendations
@@ -446,6 +439,7 @@ class EnhancedRecommender:
                 'novelty_score': row.get('novelty_score', 0),
                 'critical_consensus': row.get('critical_consensus', 'unknown')
             }
+
             results.append(result)
 
         return results
@@ -457,6 +451,7 @@ class EnhancedRecommender:
 
         if len(recommendations) == 0:
             print("No recommendations found matching your criteria.\n")
+
             return
 
         for i, rec in enumerate(recommendations, 1):
@@ -468,29 +463,38 @@ class EnhancedRecommender:
             # Show new enhanced features
             if rec.get('instrumentation'):
                 print(f"   Instrumentation: {rec['instrumentation']}")
+
             if rec.get('mood_energy'):
                 print(f"   Mood/Energy: {rec['mood_energy']}")
+
             if rec.get('listening_contexts'):
                 print(f"   Best for: {rec['listening_contexts']}")
+
             if rec.get('is_polarizing'):
                 print(f"   ⚠️  Polarizing/Divisive album")
+
             if rec.get('novelty_score', 0) > 0:
                 print(f"   💡 Innovative (novelty: +{rec['novelty_score']})")
+
             elif rec.get('novelty_score', 0) < 0:
                 print(f"   📋 Derivative (novelty: {rec['novelty_score']})")
 
             if rec['similarity']:
                 print(f"   Match Score: {rec['similarity']:.3f}")
+
             if rec['theme_match']:
                 print(f"   Theme Matches: {rec['theme_match']}")
 
             highlights = rec['highlights'].split(' | ')
+
             if highlights and highlights[0]:
                 print(f"   Key Points:")
+
                 for j, highlight in enumerate(highlights[:2], 1):
                     print(f"     • {highlight[:150]}...")
 
             print(f"   Full Review: {rec['url']}")
+
             print()
 
     def load_models(self, directory='models'):
@@ -505,8 +509,10 @@ class EnhancedRecommender:
         try:
             with open(vectorizer_path, 'rb') as f:
                 self.vectorizer = pickle.load(f)
+
             with open(tfidf_path, 'rb') as f:
                 self.tfidf_matrix = pickle.load(f)
+
             self.embeddings = np.load(embeddings_path)
 
             # Initialize the sentence transformer model (needed for encoding new queries)
@@ -514,10 +520,12 @@ class EnhancedRecommender:
             self.model = SentenceTransformer('all-MiniLM-L6-v2')
 
             print(f" Models loaded from {directory}/")
+
             return True
         
         except Exception as e:
             print(f"Error loading models: {e}")
+
             return False
 
     def save_models(self, directory='models'):
@@ -535,7 +543,7 @@ class EnhancedRecommender:
 
 
 def main():
-    print("Building YourNextAlbum models: TF-IDF (text similarity), semantic embeddings (contextual meaning), and feature-engineered vectors (album attributes)...")
+    print("Building the YourNextAlbum models: TF-IDF (text similarity), semantic embeddings (contextual meaning), and feature-engineered vectors (album attributes)...")
 
     recommender = EnhancedRecommender()
     recommender.build_models()
@@ -543,6 +551,7 @@ def main():
 
     print("YourNextAlbum Recommendation Models built and saved.")
 
-
+# If the recommender script is run by name, build the YourNextAlbum models
 if __name__ == "__main__":
+    # Build the YourNextAlbum recommender models
     main()

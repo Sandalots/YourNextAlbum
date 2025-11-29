@@ -1,10 +1,12 @@
+''' YourNextAlbum Stage 3: Sentiment Analysis of Pitchfork Album Reviews using Transformer Models and Keyword Matching '''
+
 # from the sentiment directory, retrieve the following sentiment matching keywords rules;
 from sentiment.sentiment_keywords import (
     positive_words, negative_words, musical_terms, descriptive_words,
     intensity_modifiers, char_patterns, instrument_keywords, quality_indicators,
     style_indicators, mood_keywords, energy_indicators, polarizing_phrases,
     novelty_positive, novelty_negative, context_keywords, era_keywords, lyrical_theme_keywords, general_theme_keywords
-)
+) # getting the keywords to match sentiment against the input review texts from the external setiment_keywords.py file, external as to keep this file loc slimmer and more human-readable.
 
 import pandas as pd
 from transformers import pipeline
@@ -19,7 +21,6 @@ logging.set_verbosity_error()
 
 class ReviewAnalyser:
     def __init__(self, data_path='outputs/pitchfork_reviews_preprocessed.csv'):
-        # Loading silently
         self.df = pd.read_csv(data_path)
         self.sentiment_analyzer = None
         self.summarizer = None
@@ -27,6 +28,7 @@ class ReviewAnalyser:
         # Validate that enhanced preprocessing columns exist
         if 'review_text_processed' not in self.df.columns:
             print("Warning: 'review_text_processed' column not found. Using original 'review_text'.")
+
             self.df['review_text_processed'] = self.df['review_text']
 
     def load_models(self):
@@ -50,6 +52,7 @@ class ReviewAnalyser:
 
         try:
             result = self.sentiment_analyzer(truncated)[0]
+            
             return result
         
         except:
@@ -59,8 +62,7 @@ class ReviewAnalyser:
         if not text or len(text.strip()) == 0:
             return []
 
-        # Fix common HTML artifacts and conjoined words
-        # Add space before capital letters that follow lowercase (common in HTML parsing issues)
+        # Fixing,  common HTML artifacts and conjoined wordsAdd space before capital letters that follow lowercase (as very common in HTML parsing issues)
         text = re.sub(r'([a-z])([A-Z])', r'\1 \2', text)
 
         # Fix missing spaces after punctuation
@@ -70,6 +72,7 @@ class ReviewAnalyser:
         text = re.sub(r'([a-z])—([a-z])', r'\1 — \2', text)
 
         sentences = re.split(r'[.!?]+', text)
+
         sentences = [s.strip() for s in sentences if len(s.strip()) > 20]
 
         if len(sentences) == 0:
@@ -89,8 +92,10 @@ class ReviewAnalyser:
                 score += 2
 
             word_count = len(words)
+
             if 15 <= word_count <= 40:
                 score += 3
+
             elif word_count > 40:
                 score += 1
 
@@ -126,17 +131,18 @@ class ReviewAnalyser:
             return {}
 
         text_lower = text.lower()
+
         characteristics = {}
 
         for char, keywords in char_patterns.items():
             for keyword in keywords:
-
                 if keyword in text_lower:
                     intensity = 1.0
 
                     for modifier, mult in intensity_modifiers.items():
                         if f"{modifier} {keyword}" in text_lower:
                             intensity = mult
+
                             break
 
                     characteristics[char] = max(characteristics.get(char, 0), intensity)
@@ -149,6 +155,7 @@ class ReviewAnalyser:
             return []
 
         text_lower = text.lower()
+
         instruments = []
 
         for instrument, keywords in instrument_keywords.items():
@@ -168,12 +175,14 @@ class ReviewAnalyser:
         for q, keywords in quality_indicators.items():
             if any(keyword in text_lower for keyword in keywords):
                 quality = q
+
                 break
 
         style = 'unknown'
         for s, keywords in style_indicators.items():
             if any(keyword in text_lower for keyword in keywords):
                 style = s
+
                 break
 
         return {'quality': quality, 'style': style}
@@ -186,6 +195,7 @@ class ReviewAnalyser:
         text_lower = text.lower()
 
         moods = []
+
         for mood, keywords in mood_keywords.items():
             if any(keyword in text_lower for keyword in keywords):
                 moods.append(mood)
@@ -216,7 +226,6 @@ class ReviewAnalyser:
         text_lower = text.lower()
 
         positive_count = sum(1 for word in novelty_positive if word in text_lower)
-
         negative_count = sum(1 for word in novelty_negative if word in text_lower)
 
         # Return score: positive = innovative, negative = derivative
@@ -255,8 +264,7 @@ class ReviewAnalyser:
         text_lower = text.lower()
 
         # Decade mentions
-        decades = ['60s', '70s', '80s', '90s', '00s', '2000s',
-                   'sixties', 'seventies', 'eighties', 'nineties']
+        decades = ['60s', '70s', '80s', '90s', '00s', '2000s', 'sixties', 'seventies', 'eighties', 'nineties']
         
         throwback = any(decade in text_lower for decade in decades)
 
@@ -265,6 +273,7 @@ class ReviewAnalyser:
         for era, keywords in era_keywords.items():
             if any(keyword in text_lower for keyword in keywords):
                 era_sound = era
+
                 break
 
         return {'era_sound': era_sound, 'throwback': throwback}
@@ -323,6 +332,7 @@ class ReviewAnalyser:
         text_lower = text.lower()
 
         themes = []
+
         for theme, keywords in general_theme_keywords.items():
             if any(keyword in text_lower for keyword in keywords):
                 themes.append(theme)
@@ -459,8 +469,7 @@ class ReviewAnalyser:
         print("EXAMPLE SENTIMENT ANALYZED ALBUM REVIEWS")
         print("="*80 + "\n")
 
-        df_analyzed = pd.read_csv(
-            'outputs/pitchfork_reviews_preprocessed_plus_sentiments.csv')
+        df_analyzed = pd.read_csv('outputs/pitchfork_reviews_preprocessed_plus_sentiments.csv')
 
         samples = df_analyzed.sample(num_examples)
 
@@ -480,23 +489,32 @@ class ReviewAnalyser:
                 print(f"  {i}. {highlight}")
 
             print(f"\nFull Review URL: {row['url']}")
+
             print()
 
         print("="*80 + "\n")
 
+# Main function to determine sentiment from input album reviews dataset
 def main():
     # Use outputs directory for all files
-    data_path = 'outputs/pitchfork_reviews_preprocessed.csv'
-    output_path = 'outputs/pitchfork_reviews_preprocessed_plus_sentiments.csv'
+    data_path = 'outputs/pitchfork_reviews_preprocessed.csv' # input
+    output_path = 'outputs/pitchfork_reviews_preprocessed_plus_sentiments.csv' # output
 
+    # get input and validate 
     analyzer = ReviewAnalyser(data_path)
+
+    # load the models 
     analyzer.load_models()
+
+    # for all reviews in input, sentiment analysis all thousands of them
     analyzer.analyze_all_reviews()
 
-    print(
-        f" Complete! All albums sentiment analyzed and saved to '{output_path}'")
+    # tell user sentiment analysis is complete
+    print(f" Complete! All albums sentiment analyzed and saved to '{output_path}'")
 
+    # show 5 examples to showcase the sentiment analysis results
     analyzer.show_examples(num_examples=5)
 
+# If the sentiment analyser script is run directly by name, let's start the sentiment analysis process, loading all the album reviews and analysing them, getting the sentiment and so on, as defined well above for each we try and gather from the source author review text...
 if __name__ == "__main__":
     main()
