@@ -1,4 +1,5 @@
-# Sentiment Keyword Lists and Dictionaries
+# Sentiment Keyword Lists and Dictionaries for YourNextAlbum's Album Review Sentiment Analysis
+
 positive_words = ['brilliant', 'excellent', 'masterpiece', 'stunning', 'beautiful', 'powerful',
                   'impressive', 'best', 'perfect', 'remarkable', 'extraordinary', 'phenomenal',
                   'incredible', 'outstanding', 'exceptional', 'captivating', 'mesmerizing',

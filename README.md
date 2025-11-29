@@ -67,6 +67,8 @@ streamlit run album_recommender_prompt_app.py # Launches a streamlit UI to allow
 - **album_tfidf_matrix.pkl**: Precomputed TF-IDF feature matrix for all albums, used for fast keyword-based recommendations.
 - **album_semantic_embeddings.npy**: SentenceTransformer embeddings for all albums, enabling semantic search and matching user prompts to albums based on meaning.
 
+As these models are pre-saved and come with the repo, you can run the streamlit application as you wish even without training them yourself.
+
 ## Error Analysing
 
 To analyze errors and evaluate the performance of the album recommendation system, use the provided error analysis script. This script runs a large set of prompts through the recommender, generates recommendations, and computes a variety of metrics and analyses to help you understand model performance and behavior.
@@ -77,17 +79,36 @@ Run the following commands:
 python3 error_analyze_recommender.py
 
 
-The file will output:
+The python source file will output:
 
 - **Recall@5**: How many relevant albums were successfully recommended out of all possible relevant albums (for each prompt).
 - **Precision@5**: How many of the recommended albums are actually relevant.
 - **nDCG@5 (Normalized Discounted Cumulative Gain)**: Measures ranking quality, giving higher scores for relevant albums ranked higher.
 - **MRR@5 (Mean Reciprocal Rank)**: Indicates how early the first relevant album appears in the recommendations.
 - **Per-genre breakdowns**: Average metrics for each genre present in the recommendations.
-- **Diversity and overlap analysis**: Statistics and (optional) visualizations on unique genres/albums per prompt, overlap between prompts, and most commonly recommended albums and artists.
+- **Diversity and overlap analysis**: Statistics and visualizations on unique genres/albums per prompt, overlap between prompts, and most commonly recommended albums and artists.
 - **Detailed prompt-by-prompt results**: For each prompt, shows the ground truth, recommended albums, and all computed metrics.
 - **Top 20 artists**: Lists the most frequently recommended artists.
 
-If you run with visualizations enabled (default), you will also see plots for genre/artist distribution and recommendation diversity.
+This aids in determining YourNextModel performance, as-well as any biases slash undesired behaviours of the models.
 
-These analyses help you identify strengths, weaknesses, and potential biases in your recommendation model.
+## Requirements
+
+- **Python 3.11** (recommended; other versions may cause dependency issues such as pyarrow)
+- **pip** (Python package manager)
+- **System packages** (install via Homebrew on macOS):
+ - `cmake` (required for some Python packages)
+ - `openssl` (required for secure connections)
+ - `apache-arrow` (required for `pyarrow`)
+- **Python packages** (installed via `pip install -r requirements.txt`):
+ - `pyarrow` (for Arrow/Parquet data support)
+ - `selenium` (for web scraping automation)
+ - `beautifulsoup4`, `requests`, `lxml` (for web scraping and parsing)
+ - `pandas`, `numpy` (for data processing)
+ - `scikit-learn`, `sentence-transformers`, `transformers`, `torch` (for ML/NLP)
+ - `streamlit` (for the web app UI)
+ - `matplotlib`, `seaborn` (for visualizations)
+ - `nltk` (for text preprocessing)
+ - `watchdog` (for file monitoring)
+
+See `requirements.txt` for the full list of Python dependencies.

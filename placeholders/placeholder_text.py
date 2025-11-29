@@ -1,4 +1,5 @@
-# Random placeholder user prompts for recommending albums based on the below examples.
+# These combinations of prompts show as placeholders for the prompt search on the main YourNextAlbum streamlit interface.
+
 placeholder_examples = [
     "atmospheric electronic",
     "high-energy rock for workouts",
