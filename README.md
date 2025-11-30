@@ -77,18 +77,18 @@ Run the following commands:
 
 ```sh
 python3 error_analyze_recommender.py
-
+```
 
 The python source file will output:
 
-- Recall@5 How many relevant albums were successfully recommended out of all possible relevant albums (for each prompt).
-- Precision@5: How many of the recommended albums are actually relevant.
-- nDCG@5 (Normalized Discounted Cumulative Gain)**: Measures ranking quality, giving higher scores for relevant albums ranked higher.
-- MRR@5 (Mean Reciprocal Rank)**: Indicates how early the first relevant album appears in the recommendations.
-- Per-genre breakdowns**: Average metrics for each genre present in the recommendations.
-- Diversity and overlap analysis**: Statistics and visualizations on unique genres/albums per prompt, overlap between prompts, and most commonly recommended albums and artists.
-- Detailed prompt-by-prompt results**: For each prompt, shows the ground truth, recommended albums, and all computed metrics.
-- Top 20 artists**: Lists the most frequently recommended artists.
+- **Recall@5:** How many relevant albums were successfully recommended out of all possible relevant albums (for each prompt).
+- **Precision@:** How many of the recommended albums are actually relevant.
+- **nDCG@5 (Normalized Discounted Cumulative Gain)**: Measures ranking quality, giving higher scores for relevant albums ranked higher.
+- **MRR@5 (Mean Reciprocal Rank)**: Indicates how early the first relevant album appears in the recommendations.
+- **Per-genre breakdowns**: Average metrics for each genre present in the recommendations.
+- **Diversity and overlap analysis**: Statistics and visualizations on unique genres/albums per prompt, overlap between prompts, and most commonly recommended albums and artists.
+- **Detailed prompt-by-prompt results**: For each prompt, shows the ground truth, recommended albums, and all computed metrics.
+- **Top 20 artists**: Lists the most frequently recommended artists.
 
 This aids in determining YourNextModel performance, as-well as any biases slash undesired behaviours of the models.
 
@@ -96,11 +96,11 @@ This aids in determining YourNextModel performance, as-well as any biases slash 
 
 - Python 3.11** (recommended; other versions may cause dependency issues such as pyarrow)
 - pip** (Python package manager)
-- System packages (install via Homebrew on macOS):
+- **System packages (install via Homebrew on macOS):**
  - `cmake` (required for some Python packages)
  - `openssl` (required for secure connections)
  - `apache-arrow` (required for `pyarrow`)
-- Python packages** (installed via `pip install -r requirements.txt`):
+- **Python packages** (installed via `pip install -r requirements.txt`):
  - `pyarrow` (for Arrow/Parquet data support)
  - `selenium` (for web scraping automation)
  - `beautifulsoup4`, `requests`, `lxml` (for web scraping and parsing)
