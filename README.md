@@ -76,7 +76,7 @@ To analyze errors and evaluate the performance of the album recommendation syste
 Run the following commands:
 
 ```sh
-python3 error_analyze_recommender.py
+python3 analysis/error_analyze_recommender.py
 ```
 
 The python source file will output:

@@ -2,14 +2,21 @@
 
 import re
 import numpy as np
-from album_recommender_model import EnhancedRecommender
+import argparse
+import os
+import sys
 import random
 from collections import Counter
 import matplotlib.pyplot as plt
 import pandas as pd
-import argparse
-import os
 import seaborn as sns
+
+# Ensure imports work when this script lives in analysis/
+REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+if REPO_ROOT not in sys.path:
+    sys.path.insert(0, REPO_ROOT)
+
+from album_recommender_model import EnhancedRecommender
 
 parser = argparse.ArgumentParser(description="Album Recommendation Error Analysis")
 args = parser.parse_args()
@@ -327,7 +334,7 @@ for idx, row in df_nonempty.iterrows():
     print(f"  MRR@5: {row['mrr_at_5']}")
 
 # --------- Analysis Functions ---------
-VIS_DIR = os.path.join(os.path.dirname(__file__), 'visualisations')
+VIS_DIR = os.path.join(REPO_ROOT, 'visualisations')
 os.makedirs(VIS_DIR, exist_ok=True)
 
 def analyze_recommendation_diversity(df, k=5, show_viz=True):

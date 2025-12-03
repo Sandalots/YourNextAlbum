@@ -39,7 +39,8 @@ sys.stderr = SuppressStderr()
 
 st.set_page_config(page_title="YourNextAlbum", page_icon="🎵")
 
-with open("app_styles.css") as f:
+css_path = os.path.join(os.path.dirname(__file__), "styles", "app_styles.css")
+with open(css_path) as f:
     st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
 @st.cache_data(ttl=3600)
