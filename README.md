@@ -41,7 +41,7 @@ python album_recommender_model.py # builds the model and recommends albums based
 
 streamlit run album_recommender_prompt_app.py # Launches a streamlit UI to allow users to prompt the created model for album recommendations
 
-(or alternatively use ./quickstart if on unix machine.)
+(or alternatively use `./scripts/quickstart.sh` on Unix/macOS.)
 ```
 
 ## Analysis Features from the Author's Album Review(s)
