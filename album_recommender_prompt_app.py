@@ -276,24 +276,6 @@ if recommend_button or surprise_button or user_prompt:
                         with st.expander("🎧 Best For"):
                             st.markdown(rec['listening_contexts'])
 
-                # Show confidence score before the read full review link, color-coded
-                if rec.get('similarity') is not None:
-                    conf = rec['similarity']
-
-                    if conf >= 0.75:
-                        conf_class = 'confidence-green'
-                        conf_emoji = '🟢'
-
-                    elif conf >= 0.5:
-                        conf_class = 'confidence-orange'
-                        conf_emoji = '🟠'
-
-                    else:
-                        conf_class = 'confidence-red'
-                        conf_emoji = '🔴'
-
-                    st.markdown(f"<div style='text-align: center; margin-top: 0.5rem;'><b>Confidence:</b> {conf_emoji} {conf:.3f}</div>", unsafe_allow_html=True)
-
                 # Center the read full review link
                 st.markdown(f"<div style='text-align: center; margin-top: 1rem;'><a href='{rec['url']}' target='_blank'>📖 Read Full Review</a></div>", unsafe_allow_html=True)
                 st.markdown("---")
