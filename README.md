@@ -1,3 +1,6 @@
+# Deployed
+Deployed at: https://yournextalbum-lwfn7mddzxpgygdmasti3z.streamlit.app
+
 # YourNextAlbum
 
 - **pitchfork_album_scraper.py**: Scrapes thousands of album reviews from Pitchfork using Selenium and BeautifulSoup. The scraper collects review text, scores, album/artist info, and album art URLs.
