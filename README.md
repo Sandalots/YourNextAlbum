@@ -44,6 +44,12 @@ streamlit run album_recommender_prompt_app.py # Launches a streamlit UI to allow
 (or alternatively use `./scripts/quickstart.sh` on Unix/macOS.)
 ```
 
+### Demo Video
+
+A demonstration video of **YourNextAlbum** in action is included in this repository.
+
+**📹 [View the demo video: `demo.mov`](./demo.mov)**
+
 ## Analysis Features from the Author's Album Review(s)
 
 - **Sentiment & Consensus** - Tone + score alignment
